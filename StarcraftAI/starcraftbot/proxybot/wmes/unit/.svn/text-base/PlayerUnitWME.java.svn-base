@@ -1,0 +1,77 @@
+package starcraftbot.proxybot.wmes.unit;
+
+import java.util.HashMap;
+
+import starcraftbot.abl.StarCraftConstants;
+import starcraftbot.proxybot.bot.ABLStarCraftBot;
+/**
+ * Represents a bot-controlled unit.
+ */
+public class PlayerUnitWME extends UnitWME {
+	
+	public enum WorkerTask { IDLE, MINING, GAS, CONSTRUCTING, SCOUTING }
+	
+	private static HashMap<Integer, Integer> taskMap;
+	
+	private static HashMap<Integer, Integer> rallyMap;
+
+	private static HashMap<Integer, Integer> mineCooldown;
+
+	public static void init() {
+		taskMap = new HashMap<Integer, Integer>();
+		rallyMap = new HashMap<Integer, Integer>();
+		mineCooldown = new HashMap<Integer, Integer>();
+	}
+	
+	public int getTask() {
+		Integer status = taskMap.get(ID);
+		return (status != null) ? status : WorkerTask.IDLE.ordinal();
+	}
+	
+	public void setTask(int status) {
+		if (ID == StarCraftConstants.NULL_UNIT) {
+			System.err.println("Attempt to set task before ID was initialized.");
+			Thread.dumpStack();
+		}
+		
+		taskMap.put(ID, status);
+	}
+	
+	public void setRally() {
+		Integer count = rallyMap.get(ID);
+		if (count == null) count = 0;
+		
+		rallyMap.put(ID, count + 1);
+	}
+	
+	/**
+	 * Require the unit to set the rally point 3 times
+	 */
+	public boolean getRallySet() {
+		Integer count = rallyMap.get(ID);
+		return count != null && count > 2;
+	}
+	
+	/**
+	 * Tells the unit that the bot has tried to laid a mine. 
+	 * 
+	 * If the mine planting fails, the mine count will be restored next cycle.
+	 */
+	public void laidMine() {
+		mineCount = Math.max(0, mineCount - 1); 
+		setMineCooldown(ABLStarCraftBot.getGame().getGameFrame() + 50);	// give 2 seconds to plant a mine
+	}
+
+	public boolean getCanMine() {
+		return ABLStarCraftBot.getGame().getGameFrame() > getMineCooldown();
+	}
+	
+	public int getMineCooldown() {
+		Integer frame = mineCooldown.get(ID);
+		return (frame != null) ? frame : 0;
+	}
+	
+	public void setMineCooldown(int frame) {
+		mineCooldown.put(ID, frame);
+	}
+}

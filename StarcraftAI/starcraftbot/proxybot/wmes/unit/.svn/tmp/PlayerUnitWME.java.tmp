@@ -1,0 +1,52 @@
+package starcraftbot.proxybot.wmes.unit;
+<<<<<<< .mine
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+=======
+
+import java.util.HashMap;
+
+>>>>>>> .r167
+/**
+ * Represents a bot-controlled unit.
+ */
+public class PlayerUnitWME extends UnitWME {
+	
+	public enum WorkerTask { IDLE, MINING, GAS, CONSTRUCTING, SCOUTING }
+	
+	private static HashMap<Integer, Integer> taskMap;
+	
+	public static void init() {
+		taskMap = new HashMap<Integer, Integer>();
+	}
+	
+	public int getTask() {
+		Integer status = taskMap.get(ID);
+		return (status != null) ? status : WorkerTask.IDLE.ordinal();
+	}
+	
+	public void setTask(int status) {
+		taskMap.put(ID, status);
+	}
+	/** the task that has control of this unit. Use 0 for "free" or very low-priority tasks like mining. */
+	private static HashMap<Integer, Integer> taskMap = new HashMap<Integer, Integer>();
+
+	public int getTask() {
+		HashMap<Integer, Integer> myMap = PlayerUnitWME.taskMap;
+		if (PlayerUnitWME.taskMap.containsKey(this.getID())) {
+			return PlayerUnitWME.taskMap.get(this.getID());
+		} else {
+			return 0;
+		}
+	}
+
+	public void setTask(int task) throws Exception {
+		if (this.getID() == -1) {
+			throw new Exception("Attempt to set task before ID was initialized.");
+		}
+		PlayerUnitWME.taskMap.put(this.getID(), task);
+	}
+
+}

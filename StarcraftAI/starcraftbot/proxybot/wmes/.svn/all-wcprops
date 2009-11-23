@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/starcraftbot/!svn/ver/208/trunk/starcraftbot/proxybot/wmes
+END
+UpgradeTypeWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/starcraftbot/!svn/ver/84/trunk/starcraftbot/proxybot/wmes/UpgradeTypeWME.java
+END
+PlayerWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/starcraftbot/!svn/ver/208/trunk/starcraftbot/proxybot/wmes/PlayerWME.java
+END
+MapWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/starcraftbot/!svn/ver/199/trunk/starcraftbot/proxybot/wmes/MapWME.java
+END
+UnitTypeWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/starcraftbot/!svn/ver/180/trunk/starcraftbot/proxybot/wmes/UnitTypeWME.java
+END
+BaseLocationWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/starcraftbot/!svn/ver/181/trunk/starcraftbot/proxybot/wmes/BaseLocationWME.java
+END
+ChokePointWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/starcraftbot/!svn/ver/197/trunk/starcraftbot/proxybot/wmes/ChokePointWME.java
+END
+StartingLocationWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/starcraftbot/!svn/ver/82/trunk/starcraftbot/proxybot/wmes/StartingLocationWME.java
+END
+TechTypeWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/starcraftbot/!svn/ver/83/trunk/starcraftbot/proxybot/wmes/TechTypeWME.java
+END

@@ -1,0 +1,85 @@
+package starcraftbot.proxybot.bot;
+
+import java.util.Hashtable;
+import java.util.Set;
+
+import abl.runtime.listeners.BehavingListener;
+import starcraftbot.proxybot.Game;
+import starcraftbot.proxybot.command.CommandQueue;
+import starcraftbot.proxybot.wmes.unit.PlayerUnitWME;
+/**
+ * ABL implementation of a StarCraft bot.
+ */
+public class ABLStarCraftBot implements StarCraftBot, BehavingListener {
+
+	/** static reference to the current game object */
+	private static Game game;
+
+	/** the behaving entity */
+	private starcraftbot.abl.java.StarCraftBot ablBot;
+
+	private boolean showABT = Boolean.getBoolean("ShowABTViewer");
+	private boolean showSpeed = Boolean.getBoolean("ShowABTSpeed");
+	
+	private ABTViewer viewer;
+
+	private int updates = 0;
+	private long lastUpdate = 0;
+	
+	/** 
+	 * Provides a static way to access the command queue, for the ABL actions.
+	 */
+	public static CommandQueue getQueue() {
+		return game.getCommandQueue();
+	}
+
+	/** 
+	 * Provides a static way to the game object, for the ABL sensors.
+	 */
+	public static Game getGame() {
+		return game;
+	}
+	
+	/**
+	 * Starts ABL.
+	 */
+	public void start(Game game) {
+		PlayerUnitWME.init();
+		
+		ABLStarCraftBot.game = game;
+		ablBot = new starcraftbot.abl.java.StarCraftBot();
+
+		if (showSpeed) {
+			ablBot.addBehavingListener(this);
+		}
+		
+		if (showABT) {
+			viewer = new ABTViewer();
+			ablBot.addBehavingListener(viewer);
+		}
+		
+		ablBot.setUseSynchrousSensors();
+		ablBot.startBehaving();
+	}
+
+	/**
+	 * Stops ABL.
+	 */
+	public void stop() {
+		ablBot.stopBehaving();
+		
+		if (viewer != null) {
+			viewer.stop();
+		}
+	}
+
+	public void onBehave(Hashtable executingSteps, Set leafSteps) {
+		updates++;
+		
+		if (System.currentTimeMillis() > (lastUpdate + 1000)) {
+			System.out.println("ABT updates: " + updates);
+			lastUpdate = System.currentTimeMillis();
+			updates = 0;
+		}
+	}
+}

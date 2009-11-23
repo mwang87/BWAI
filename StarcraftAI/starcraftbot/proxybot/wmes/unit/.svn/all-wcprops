@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/starcraftbot/!svn/ver/203/trunk/starcraftbot/proxybot/wmes/unit
+END
+MineralWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/starcraftbot/!svn/ver/87/trunk/starcraftbot/proxybot/wmes/unit/MineralWME.java
+END
+PlayerUnitWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/starcraftbot/!svn/ver/216/trunk/starcraftbot/proxybot/wmes/unit/PlayerUnitWME.java
+END
+EnemyUnitWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/starcraftbot/!svn/ver/87/trunk/starcraftbot/proxybot/wmes/unit/EnemyUnitWME.java
+END
+GeyserWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/starcraftbot/!svn/ver/172/trunk/starcraftbot/proxybot/wmes/unit/GeyserWME.java
+END
+UnitWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/starcraftbot/!svn/ver/215/trunk/starcraftbot/proxybot/wmes/unit/UnitWME.java
+END
+AllyUnitWME.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/starcraftbot/!svn/ver/87/trunk/starcraftbot/proxybot/wmes/unit/AllyUnitWME.java
+END

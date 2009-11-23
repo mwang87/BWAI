@@ -1,0 +1,211 @@
+package starcraftbot.proxybot.wmes;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
+import tuple.Pair;
+import tuple.Triple;
+import wm.WME;
+/**
+ * Stores tile information about a map in StarCraft.
+ * 
+ * Note: internally in StarCraft, the height and walkable arrays have a higher
+ *       resolution than the size tile in this class. Each tile is actually
+ *       a 4x4 grid, but this has been abstracted away for simplicity for now.
+ */
+public class MapWME extends WME {
+
+	/** the map name */
+	private String mapName;
+	
+	/** number of tiles wide */
+	private int mapWidth;
+
+	/** number of tiles high */
+	private int mapHeight;
+	
+	/** height array (valid values are 0,1,2) */
+	private int[][] height;
+	
+	/** buildable array */
+	private boolean[][] buildable;
+	
+	/** walkable array */
+	private boolean[][] walkable;
+		
+//	/** 
+//	 * Returns the map name.
+//	 */
+	public String getMapName() {
+		return mapName;
+	}
+
+	/**
+	 * Returns the map width (in tiles).
+	 */
+	public int getMapWidth() {
+		return mapWidth;
+	}
+
+	/**
+	 * Returns the map height (in tiles).
+	 */
+	public int getMapHeight() {
+		return mapHeight;
+	}
+	
+	/**
+	 * Returns true if the map is walkable and the given tile coordinates.
+	 */
+	public boolean isWalkable(int tx, int ty) {
+		return walkable[ty][tx];
+	}
+	
+	/**
+	 * Returns true if the map is buildable and the given tile coordinates.
+	 */
+	public boolean isBuildable(int tx, int ty) {
+		return buildable[ty][tx];
+	}
+
+	public boolean isBuildable(int tx, int ty, int width, int height) {
+		boolean result = true;
+
+		if (tx < 0 || ty < 0 || (tx + width) >= mapWidth || (ty + height) >= mapHeight) {
+			return false;
+		}
+		
+		for (int h=0; h<height; h++) {			
+			for (int w=0; w<width; w++) {
+				result &= buildable[ty + h][tx + w];
+			}
+		}
+		
+		return result;
+	}
+
+	
+	/**
+	 * Returns the height of the map at the given tile coordinates.
+	 */
+	public int getHeight(int tx, int ty) {
+		return height[ty][tx];
+	}
+	
+	/**
+	 * Creates a map based on the string recieved from the AIModule.
+	 * 
+	 * @param mapData - mapname:width:height:data
+	 * 
+	 *  Data is a character array where each tile is represented by 3 characters, 
+	 *  which specific height, buildable, walkable.
+	 */
+	public MapWME(String mapData) {
+		String[] map = mapData.split(":");
+		String data = map[3];
+
+		mapName = map[0];
+		mapWidth = Integer.parseInt(map[1]);
+		mapHeight = Integer.parseInt(map[2]);
+		
+		height = new int[mapHeight][mapWidth];
+		buildable = new boolean[mapHeight][mapWidth];
+		walkable = new boolean[mapHeight][mapWidth];
+		
+		int total = mapWidth * mapHeight;		
+		for (int i=0; i<total; i++) {
+			int w = i%mapWidth;
+			int h = i/mapWidth;
+			
+			String tile = data.substring(3*i, 3*i + 3);
+			
+			height[h][w] = Integer.parseInt(tile.substring(0,1));
+			buildable[h][w] = (1 == Integer.parseInt(tile.substring(1,2))); 
+			walkable[h][w] = (1 == Integer.parseInt(tile.substring(2,3))); 
+ 		}		
+	}
+	
+	/**
+	 * Displays the main properties.
+	 */
+	public void print() {
+		System.out.println("Name: " + mapName);
+		System.out.println("Size: " + mapWidth + " x " + mapHeight);
+		
+		System.out.println("\nBuildable");
+	 	  System.out.println("---------");
+		for (int y=0; y<mapHeight; y++) {
+			for (int x=0; x<mapWidth; x++) {
+				System.out.print(buildable[y][x] ? " " : "X");
+			}			
+			
+			System.out.println();
+		}
+
+		System.out.println("\nWalkable");
+	 	  System.out.println("--------");
+		for (int y=0; y<mapHeight; y++) {
+			for (int x=0; x<mapWidth; x++) {
+				System.out.print(walkable[y][x] ? " " : "X");
+			}			
+			
+			System.out.println();
+		}
+
+		System.out.println("\nHeight");
+	 	  System.out.println("------");
+		for (int y=0; y<mapHeight; y++) {
+			for (int x=0; x<mapWidth; x++) {
+				switch (height[y][x]) {
+					case 2:
+						System.out.print(" " );
+						break;
+					case 1:
+						System.out.print("*" );
+						break;
+					case 0:
+						System.out.print("X" );
+						break;
+				}
+			}			
+			
+			System.out.println();
+		}
+	}
+	
+	/**
+	 * Uses BFS to find the walk distance between the given locations. Returns Integer.MAX_VALUE if there is no available path.
+	 * Note that this method doesn't take unit width or building placement into account, so it will fail on maps like
+	 * Blue Storm and Medusa. */
+	public int walkDistance(int srcx, int srcy, int dstx, int dsty) {
+		int x, y;
+		Triple<Integer, Integer, Integer> here = null;
+		Triple<Integer, Integer, Integer> considering = null;
+		if (!walkable[srcx][srcy] || !walkable[dstx][dsty]) {
+			return Integer.MAX_VALUE;
+		}
+		Queue<Triple<Integer, Integer, Integer>> fringe = new LinkedList<Triple<Integer, Integer, Integer>>();
+		Set<Pair<Integer, Integer>> processed = new HashSet<Pair<Integer, Integer>>();
+		fringe.add(new Triple<Integer, Integer, Integer>(srcx, srcy, 0));
+		here = fringe.peek();
+		while (here != null) {
+			here = fringe.peek();
+			for (x = here.get1() - 1; x < here.get1() + 1; ++x) {
+				for (y = here.get2() - 1; y < here.get2() + 1; ++y) {
+					considering = new Triple<Integer, Integer, Integer>(x, y, here.get3() + 1);
+					if (x == dstx && y == dsty) {
+						return considering.get3();
+					}
+					if (!fringe.contains(considering) && !processed.contains(new Pair<Integer, Integer>(x, y))) {
+						fringe.add(considering);
+					}
+				}
+			}
+			processed.add(new Pair<Integer, Integer>(here.get1(), here.get2()));
+			fringe.remove();
+		}
+		return Integer.MAX_VALUE;
+	}
+}
